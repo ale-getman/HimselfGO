@@ -86,7 +86,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             //Getting longitude and latitude
             longtitude = location.getLongitude();
             latitude = location.getLatitude();
-
+            MyPosition.getInstance().setLongtitude(longtitude);
+            MyPosition.getInstance().setLatitude(latitude);
             //moving the map to location
             moveMap();
         }

@@ -33,5 +33,13 @@ public class SettingsActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        add_to_map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                intent = new Intent(getApplicationContext(), AddToMapsActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }

@@ -8,6 +8,7 @@
         android:id="@+id/img_load"
         android:layout_gravity="center"
         android:layout_weight="1"
+        android:backgroundTint="#2f4e6d"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -15,6 +16,7 @@
         android:id="@+id/add_to_map"
         android:layout_gravity="center"
         android:layout_weight="1"
+        android:backgroundTint="#7a546a"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -22,6 +24,7 @@
         android:id="@+id/add_img"
         android:layout_gravity="center"
         android:layout_weight="1"
+        android:backgroundTint="#735fea"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -29,6 +32,7 @@
         android:id="@+id/delete"
         android:layout_gravity="center"
         android:layout_weight="1"
+        android:backgroundTint="#e53ab2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
