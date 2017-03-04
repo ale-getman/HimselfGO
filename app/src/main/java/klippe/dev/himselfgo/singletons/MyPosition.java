@@ -1,4 +1,4 @@
-package klippe.dev.himselfgo;
+package klippe.dev.himselfgo.singletons;
 
 public class MyPosition {
 

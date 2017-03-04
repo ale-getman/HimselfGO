@@ -1,4 +1,4 @@
-package klippe.dev.himselfgo;
+package klippe.dev.himselfgo.db;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import klippe.dev.himselfgo.db.DbHelper;
+
 public class MainActivity extends AppCompatActivity {
 
     private Button start_btn, settings_btn;
