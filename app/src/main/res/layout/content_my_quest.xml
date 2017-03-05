@@ -8,10 +8,10 @@
     android:orientation="horizontal"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="klippe.dev.himselfgo.MyQuestActivity"
-    tools:showIn="@layout/activity_my_quest">
+    tools:showIn="@layout/activity_list">
 
     <ListView
-        android:id="@+id/quest_list"
+        android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
