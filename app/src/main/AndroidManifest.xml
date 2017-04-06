@@ -60,6 +60,8 @@
             android:name=".MyQuestActivity"
             android:label="@string/title_activity_my_quest"
             android:theme="@style/AppTheme"></activity>
+        <activity android:name=".TasksActivity"
+            android:theme="@style/AppTheme"/>
     </application>
 
 </manifest>

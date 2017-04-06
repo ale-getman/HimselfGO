@@ -1,5 +1,8 @@
 package klippe.dev.himselfgo;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -7,13 +10,16 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import klippe.dev.himselfgo.db.DbHelper;
 
@@ -25,6 +31,9 @@ public class MyQuestActivity extends AppCompatActivity {
     public InitDbHelper iDbHelper;
     public ListAdapter adapter;
     public Cursor cursor;
+    public final Context context = this;
+    public String name_quest;
+    public String complexity_quest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,23 +51,53 @@ public class MyQuestActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                showAlert();
             }
         });
     }
 
-    public void CreateList(){
-        cursor = sdb.query(DbHelper.TABLE_QUESTS, new String[]{DbHelper._ID, DbHelper.NAME_QUEST,
-                DbHelper.COMPLEXITY, DbHelper.COUNT_TASKS },
-                null, null, null, null, null) ;
+    public void showAlert() {
+        View view = getLayoutInflater().inflate(R.layout.alertdialog, null);
 
+        final AlertDialog.Builder alert = new AlertDialog.Builder(
+                context);
+        final EditText name = (EditText) view.findViewById(R.id.field_name_quest);
+        final EditText complexity = (EditText) view.findViewById(R.id.field_complexity);
+        alert.setMessage("Your quest:");
+        alert.setView(view);
+        alert.setPositiveButton("Ok",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        name_quest = name.getText().toString();
+                        complexity_quest = complexity.getText().toString();
+                        insertDB();
+                        CreateList();
+                    }
+                });
+        AlertDialog build = alert.create();
+        build.show();
+    }
+
+    public void insertDB() {
+        ContentValues newValues = new ContentValues();
+        newValues.put(DbHelper.NAME_QUEST, name_quest);
+        newValues.put(DbHelper.COMPLEXITY, complexity_quest);
+        newValues.put(DbHelper.COUNT_TASKS, 0);
+        sdb.insert(DbHelper.TABLE_QUESTS, null, newValues);
+    }
+
+    public void CreateList() {
+        cursor = sdb.query(DbHelper.TABLE_QUESTS, new String[]{DbHelper._ID, DbHelper.NAME_QUEST,
+                        DbHelper.COMPLEXITY, DbHelper.COUNT_TASKS},
+                null, null, null, null, null);
 
         adapter = new SimpleCursorAdapter(this, // Связь.
                 R.layout.item_my_quest, // Определения шаблона элемента
                 cursor, // Переход к курсору, который надо запомнить.
                 // Массив курсоров, которые надо запомнить.
-                new String[] { DbHelper.NAME_QUEST, DbHelper.COMPLEXITY, DbHelper.COUNT_TASKS},
+                new String[]{DbHelper.NAME_QUEST, DbHelper.COMPLEXITY, DbHelper.COUNT_TASKS},
                 // Массив, связывающий запомненные курсоры и шаблоны с ними связанные
-                new int[] { R.id.name_quest, R.id.complexity, R.id.count });
+                new int[]{R.id.name_quest, R.id.complexity, R.id.count});
         quest_list.setAdapter(adapter);
         quest_list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         ColorDrawable divcolor = new ColorDrawable(Color.parseColor("#FF12212f"));
@@ -72,5 +111,11 @@ public class MyQuestActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        CreateList();
     }
 }

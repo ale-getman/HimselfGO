@@ -40,7 +40,7 @@ public class DbHelper  extends SQLiteOpenHelper implements BaseColumns{
             + BaseColumns._ID + " integer primary key autoincrement, "
             + NAME_QUEST + " text not null, "
             + COMPLEXITY + " text not null, "
-            + COUNT_TASKS + " integer not null);";
+            + COUNT_TASKS + " integer);";
 
     public DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
