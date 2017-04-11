@@ -62,7 +62,9 @@ public class MyQuestActivity extends AppCompatActivity {
                 context);
         final EditText name = (EditText) view.findViewById(R.id.field_name_quest);
         final EditText complexity = (EditText) view.findViewById(R.id.field_complexity);
-        alert.setMessage("Your quest:");
+        name.setHint("Имя квеста");
+        complexity.setHint("Сложность квеста");
+        alert.setMessage("Ваш квест:");
         alert.setView(view);
         alert.setPositiveButton("Ok",
                 new DialogInterface.OnClickListener() {

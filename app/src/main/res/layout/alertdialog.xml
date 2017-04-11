@@ -5,7 +5,6 @@
     android:orientation="vertical">
 
     <EditText
-        android:text="name"
         android:gravity="center"
         android:id="@+id/field_name_quest"
         android:layout_width="match_parent"
@@ -13,7 +12,6 @@
         android:padding="10dp" />
 
     <EditText
-        android:text="complexity"
         android:gravity="center"
         android:id="@+id/field_complexity"
         android:layout_width="match_parent"

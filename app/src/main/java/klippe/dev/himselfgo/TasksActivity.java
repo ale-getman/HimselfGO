@@ -1,22 +1,25 @@
 package klippe.dev.himselfgo;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import klippe.dev.himselfgo.adapters.TaskListAdapter;
 import klippe.dev.himselfgo.db.DbHelper;
 import klippe.dev.himselfgo.pojo.Task;
 
+import static android.view.View.GONE;
 import static klippe.dev.himselfgo.InitDbHelper.sdb;
 
 /**
@@ -30,6 +33,7 @@ public class TasksActivity extends AppCompatActivity {
     public FloatingActionButton fab;
     public TaskListAdapter adapter;
     public Cursor cursor;
+    public Context context = this;
     public static Task task;
 
     @Override
@@ -48,18 +52,45 @@ public class TasksActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(TasksActivity.this, SetImagesActivity.class);
-                task.setStep(task_list.getCount());
-                startActivity(intent);
+                showAlert();
             }
         });
     }
 
+    public void showAlert() {
+        View view = getLayoutInflater().inflate(R.layout.alertdialog, null);
+
+        final AlertDialog.Builder alert = new AlertDialog.Builder(
+                context);
+        final EditText name = (EditText) view.findViewById(R.id.field_name_quest);
+        final EditText complexity = (EditText) view.findViewById(R.id.field_complexity);
+        name.setHint("Имя задания");
+        complexity.setVisibility(GONE);
+        alert.setMessage("Ваше задание:");
+        alert.setView(view);
+        alert.setPositiveButton("Ok",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        task.setName(name.getText().toString());
+                        task.setStep(task_list.getCount());
+                        Intent intent = new Intent(TasksActivity.this, SetImagesActivity.class);
+                        startActivity(intent);
+                    }
+                });
+        AlertDialog build = alert.create();
+        build.show();
+    }
+
     private void CreateList() {
-        cursor = sdb.query(DbHelper.TABLE_TASKS, new String[]{DbHelper._ID, DbHelper.QUEST,
-                    DbHelper.NAME_TASK, DbHelper.LONGTITUDE,
-                    DbHelper.LATITUDE, DbHelper.STEP, DbHelper.SRC },
-                    null, null, null, null, null);
+        cursor = sdb.query(DbHelper.TABLE_TASKS,
+                new String[]{DbHelper._ID, DbHelper.QUEST,
+                        DbHelper.NAME_TASK, DbHelper.LONGTITUDE,
+                        DbHelper.LATITUDE, DbHelper.STEP, DbHelper.SRC},
+                DbHelper.QUEST + " = ?",
+                new String[]{task.getQuest()},
+                null,
+                null,
+                null);
 
         adapter = new TaskListAdapter(TasksActivity.this, cursor);
         task_list.setAdapter(adapter);
@@ -72,5 +103,11 @@ public class TasksActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        CreateList();
     }
 }

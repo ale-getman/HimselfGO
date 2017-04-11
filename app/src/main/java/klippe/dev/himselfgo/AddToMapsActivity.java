@@ -44,6 +44,7 @@ public class AddToMapsActivity extends FragmentActivity implements OnMapReadyCal
         mapFragment.getMapAsync(this);
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setVisibility(View.VISIBLE);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,7 +61,7 @@ public class AddToMapsActivity extends FragmentActivity implements OnMapReadyCal
 
     public void insertDB() {
         ContentValues newValues = new ContentValues();
-        newValues.put(DbHelper.NAME_QUEST, TasksActivity.task.getQuest());
+        newValues.put(DbHelper.QUEST, TasksActivity.task.getQuest());
         newValues.put(DbHelper.NAME_TASK, TasksActivity.task.getName());
         newValues.put(DbHelper.LONGTITUDE, TasksActivity.task.getLongtitude());
         newValues.put(DbHelper.LATITUDE, TasksActivity.task.getLatitude());

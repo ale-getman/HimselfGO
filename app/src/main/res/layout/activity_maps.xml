@@ -23,6 +23,7 @@
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="10dp"
         android:layout_marginRight="10dp"
+        android:visibility="gone"
         app:backgroundTint="#ffffff"
         app:srcCompat="@android:drawable/ic_menu_save" />
 
