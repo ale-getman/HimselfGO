@@ -12,6 +12,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -49,8 +50,6 @@ public class MyQuestActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
                 showAlert();
             }
         });
@@ -103,6 +102,7 @@ public class MyQuestActivity extends AppCompatActivity {
         ColorDrawable divcolor = new ColorDrawable(Color.parseColor("#FF12212f"));
         quest_list.setDivider(divcolor);
         quest_list.setDividerHeight(2);
+        Log.e("LOGI", "count: " + quest_list.getCount() );
         quest_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(MyQuestActivity.this, TasksActivity.class);

@@ -1,36 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <Button
         android:id="@+id/set_img_btn"
-        android:text="Выберите изображение"
-        android:layout_gravity="center"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="78dp"
+        android:layout_marginStart="78dp"
+        android:text="Выберите изображение" />
 
     <TextView
         android:id="@+id/path_to_img"
-        android:layout_gravity="center"
-        android:text="путь к изображению"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/set_img_btn"
+        android:layout_alignStart="@+id/set_img_btn"
+        android:layout_below="@+id/set_img_btn"
+        android:layout_gravity="center"
+        android:layout_marginLeft="34dp"
+        android:layout_marginStart="34dp"
+        android:text="путь к изображению" />
 
     <ImageView
         android:id="@+id/img_setted"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_below="@id/path_to_img"
+        android:layout_marginTop="10dp" />
 
     <HorizontalScrollView
         android:id="@+id/hori_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fillViewport="false"
-        android:foregroundGravity="left"
-        >
+        android:layout_below="@id/img_setted"
+        android:foregroundGravity="left">
 
 
         <LinearLayout
@@ -48,4 +57,17 @@
         </LinearLayout>
     </HorizontalScrollView>
 
-</LinearLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        app:srcCompat="@android:drawable/ic_media_next"
+        app:backgroundTint="#ffffff"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"/>
+
+</RelativeLayout>

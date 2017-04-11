@@ -1,5 +1,6 @@
 package klippe.dev.himselfgo;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -10,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import klippe.dev.himselfgo.adapters.TaskListAdapter;
 import klippe.dev.himselfgo.db.DbHelper;
@@ -46,8 +48,9 @@ public class TasksActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(TasksActivity.this, SetImagesActivity.class);
+                task.setStep(task_list.getCount());
+                startActivity(intent);
             }
         });
     }
