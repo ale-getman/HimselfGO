@@ -35,6 +35,8 @@ public class MyQuestActivity extends AppCompatActivity {
     public final Context context = this;
     public String name_quest;
     public String complexity_quest;
+    public boolean flag;
+    public Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,7 @@ public class MyQuestActivity extends AppCompatActivity {
         quest_list = (ListView) findViewById(R.id.list);
         iDbHelper = new InitDbHelper(this, DbHelper.DATABASE_NAME, DbHelper.DATABASE_VERSION);
 
+        flag = getIntent().getBooleanExtra("flag", false);
         CreateList();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -53,6 +56,8 @@ public class MyQuestActivity extends AppCompatActivity {
                 showAlert();
             }
         });
+        if (flag)
+            fab.setVisibility(View.GONE);
     }
 
     public void showAlert() {
@@ -83,8 +88,22 @@ public class MyQuestActivity extends AppCompatActivity {
         ContentValues newValues = new ContentValues();
         newValues.put(DbHelper.NAME_QUEST, name_quest);
         newValues.put(DbHelper.COMPLEXITY, complexity_quest);
-        newValues.put(DbHelper.COUNT_TASKS, 0);
+        newValues.put(DbHelper.COUNT_TASKS, checkCountTasks());
         sdb.insert(DbHelper.TABLE_QUESTS, null, newValues);
+    }
+
+    public int checkCountTasks(){
+        Cursor cursorSelect = sdb.query(DbHelper.TABLE_TASKS,
+                new String[]{DbHelper._ID, DbHelper.QUEST,
+                        DbHelper.NAME_TASK, DbHelper.LONGTITUDE,
+                        DbHelper.LATITUDE, DbHelper.STEP, DbHelper.SRC},
+                DbHelper.QUEST + " = ?",
+                new String[]{name_quest},
+                null,
+                null,
+                null);
+
+        return cursorSelect.getCount();
     }
 
     public void CreateList() {
@@ -104,13 +123,20 @@ public class MyQuestActivity extends AppCompatActivity {
         ColorDrawable divcolor = new ColorDrawable(Color.parseColor("#FF12212f"));
         quest_list.setDivider(divcolor);
         quest_list.setDividerHeight(2);
-        Log.e("LOGI", "count: " + quest_list.getCount() );
+        Log.e("LOGI", "count: " + quest_list.getCount());
         quest_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(MyQuestActivity.this, TasksActivity.class);
-                TextView name_quest = (TextView) view.findViewById(R.id.name_quest);
-                intent.putExtra("name_quest", name_quest.getText().toString());
-                startActivity(intent);
+                if (flag) {
+                    intent = new Intent(MyQuestActivity.this, MapsActivity.class);
+                    TextView name_quest = (TextView) view.findViewById(R.id.name_quest);
+                    intent.putExtra("name_quest", name_quest.getText().toString());
+                    startActivity(intent);
+                } else {
+                    intent = new Intent(getApplicationContext(), TasksActivity.class);
+                    TextView name_quest = (TextView) view.findViewById(R.id.name_quest);
+                    intent.putExtra("name_quest", name_quest.getText().toString());
+                    startActivity(intent);
+                }
             }
         });
     }

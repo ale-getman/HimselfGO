@@ -2,31 +2,35 @@ package klippe.dev.himselfgo;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.location.Location;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+
+import klippe.dev.himselfgo.db.DbHelper;
+import klippe.dev.himselfgo.pojo.Task;
 import klippe.dev.himselfgo.singletons.MyPosition;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+import static klippe.dev.himselfgo.InitDbHelper.sdb;
+
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private GoogleApiClient googleApiClient;
-    private double latitude, longtitude;
+    public String name_quest;
+    public ArrayList<Task> tasks = new ArrayList<>();
+    public Task task;
+    public LatLng posTasks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,11 +41,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        googleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
+        name_quest = getIntent().getStringExtra("name_quest");
+
     }
 
 
@@ -68,70 +69,50 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
         mMap.setMyLocationEnabled(true);
-    }
+        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(
+                this, R.raw.map_style));
+        mMap.getUiSettings().setCompassEnabled(true);
 
-    private void getCurrentLocation() {
-        mMap.clear();
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-        if (location != null) {
-            //Getting longitude and latitude
-            longtitude = location.getLongitude();
-            latitude = location.getLatitude();
-            MyPosition.getInstance().setLongtitude(longtitude);
-            MyPosition.getInstance().setLatitude(latitude);
-            //moving the map to location
-            moveMap();
+
+        LatLng myPosition = new LatLng(MyPosition.getInstance().getLatitude(), MyPosition.getInstance().getLongtitude());
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(myPosition));
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myPosition, 10));
+
+        getTaskFromBD();
+
+        for (Task t : tasks) {
+            posTasks = new LatLng(t.getLatitude(), t.getLongtitude());
+            mMap.addMarker(new MarkerOptions()
+                    .position(posTasks)
+                    .title(t.getName())
+                    .snippet(t.getQuest() + " / " + t.getStep()));
         }
     }
 
-    private void moveMap() {
-        /**
-         * Creating the latlng object to store lat, long coordinates
-         * adding marker to map
-         * move the camera with animation
-         */
-        LatLng latLng = new LatLng(latitude, longtitude);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(12));
-        mMap.getUiSettings().setZoomControlsEnabled(true);
+    public void getTaskFromBD() {
+        Cursor cursorSelect = sdb.query(DbHelper.TABLE_TASKS,
+                new String[]{DbHelper._ID, DbHelper.QUEST,
+                        DbHelper.NAME_TASK, DbHelper.LONGTITUDE,
+                        DbHelper.LATITUDE, DbHelper.STEP, DbHelper.SRC},
+                DbHelper.QUEST + " = ?",
+                new String[]{name_quest},
+                null,
+                null,
+                null);
 
-
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        getCurrentLocation();
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    @Override
-    protected void onStart() {
-        googleApiClient.connect();
-        super.onStart();
-    }
-
-    @Override
-    protected void onStop() {
-        googleApiClient.disconnect();
-        super.onStop();
+        while (cursorSelect.moveToNext()) {
+            task = new Task();
+            task.setName(cursorSelect.getString(cursorSelect.getColumnIndex(DbHelper.NAME_TASK)));
+            task.setQuest(cursorSelect.getString(cursorSelect.getColumnIndex(DbHelper.QUEST)));
+            task.setLongtitude(cursorSelect.getDouble(cursorSelect.getColumnIndex(DbHelper.LONGTITUDE)));
+            task.setLatitude(cursorSelect.getDouble(cursorSelect.getColumnIndex(DbHelper.LATITUDE)));
+            task.setStep(cursorSelect.getInt(cursorSelect.getColumnIndex(DbHelper.STEP)));
+            task.setSrc(cursorSelect.getString(cursorSelect.getColumnIndex(DbHelper.SRC)));
+            tasks.add(task);
+        }
+        cursorSelect.close();
+        Log.d("LOGI", "stop");
     }
 }

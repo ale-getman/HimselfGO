@@ -51,6 +51,7 @@ public class AddToMapsActivity extends FragmentActivity implements OnMapReadyCal
             public void onClick(View view) {
                 Intent intent = new Intent(AddToMapsActivity.this, TasksActivity.class);
                 intent.putExtra("name_quest", TasksActivity.task.getQuest());
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 if (LAT != 0 && LNG != 0) {
                     insertDB();
                     startActivity(intent);
